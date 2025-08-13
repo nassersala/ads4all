@@ -1,226 +1,186 @@
-# ADS4All: Authenticated Data Structures for All
+# ADS4All
 
-A Haskell library providing type-safe, verified authenticated data structures with compile-time guarantees and comprehensive property-based testing.
+**Authenticated Data Structures for Haskell**
 
-## Overview
+## what is it?
 
-ADS4All is a novel framework for building authenticated data structures (ADS) in Haskell. It provides:
+ADS4All is a Haskell library that adds cryptographic authentication to data structures. You get data plus mathematical proof the data is correct.
 
-- **Type-safe authentication**: GADTs ensure prover/verifier modes are correctly distinguished at compile-time
-- **Generic abstractions**: Core type classes that work with any data structure
-- **Verified implementations**: Property-based testing with QuickCheck ensures correctness
-- **Security properties**: Metamorphic testing verifies cryptographic security properties
-- **Multiple data structures**: Binary Search Trees, Skip Lists, and Merkle Trees
-- **Performance benchmarking**: Comprehensive benchmarks using Criterion
-
-## Project Structure
-
-```
-ADS4All/
-├── src/
-│   └── ADS4All/
-│       ├── Core.hs           # Core types and type classes
-│       ├── Hash.hs           # Cryptographic hash utilities
-│       ├── Proofs.hs         # Proof generation and verification
-│       ├── Monad.hs          # Monadic interface for ADS operations
-│       ├── Security.hs       # Security analysis utilities
-│       ├── BST.hs            # Binary Search Tree implementation
-│       ├── SkipList.hs       # Skip List implementation
-│       └── Merkle/
-│           └── Binary.hs     # Binary Merkle Tree implementation
-├── test/
-│   ├── Spec.hs               # Main test suite
-│   └── SecurityProperties.hs # Security property tests
-├── examples/
-│   ├── BasicExample.hs       # Basic usage examples
-│   ├── AuthenticatedExample.hs # Authentication workflow examples
-│   └── SecurityDemo.hs       # Security features demonstration
-├── benchmarks/
-│   └── Main.hs               # Performance benchmarks
-├── ads4all.cabal             # Cabal package description
-├── package.yaml              # Hpack package description
-├── stack.yaml                # Stack configuration
-└── README.md                 # This file
-```
-
-## Installation
-
-### Using Stack (Recommended)
-
-```bash
-# Clone the repository
-git clone https://github.com/yourusername/ADS4All.git
-cd ADS4All
-
-# Build the project
-stack build
-
-# Run tests
-stack test
-
-# Run benchmarks
-stack bench
-
-# Install globally
-stack install
-```
-
-### Using Cabal
-
-```bash
-# Clone the repository
-git clone https://github.com/yourusername/ADS4All.git
-cd ADS4All
-
-# Build the project
-cabal build
-
-# Run tests
-cabal test
-
-# Run benchmarks
-cabal bench
-
-# Install
-cabal install
-```
-
-## Quick Start
-
-### Basic Usage
+## usage
 
 ```haskell
 import ADS4All.Core
 import ADS4All.BST
-import ADS4All.Hash
 
--- Create an authenticated BST
-let tree = insert 5 "five" $ insert 3 "three" $ insert 7 "seven" Empty
-
--- Authenticate in prover mode
-let authTree = authProver tree
-
--- Generate proof for a query
-let (result, proof) = runProver $ lookup 3 authTree
-
--- Verify in verifier mode
-let verified = runVerifier proof $ lookup 3 authTreeHash
+main = do
+  -- Build a BST
+  let tree = foldr insert Empty [5, 3, 7, 1, 9]
+  
+  -- Prover has the data
+  let authTree = authProver tree
+  
+  -- Generate proof for a query  
+  let (result, proof) = runProver $ lookup 3 authTree
+  
+  -- Verifier checks with just hash + proof
+  let verified = runVerifier proof $ lookup 3 treeHash
 ```
 
-### Examples
+## the key idea
 
-See the `examples/` directory for complete working examples:
-
-- `BasicExample.hs`: Simple usage patterns
-- `AuthenticatedExample.hs`: Full authentication workflows
-- `SecurityDemo.hs`: Security features and guarantees
-
-## Core Concepts
-
-### Authenticated Data Structures
-
-Authenticated Data Structures (ADS) allow untrusted servers to answer queries on behalf of trusted data owners while providing cryptographic proofs of correctness.
-
-### Type-Safe Modes
-
-The library uses GADTs to distinguish between Prover and Verifier modes at compile-time:
-
+Traditional client-server:
 ```haskell
-data Auth :: Type -> Type -> Type where
-  AuthP :: Hash -> a -> Auth Prover a    -- Prover has hash and value
-  AuthV :: Hash -> Auth Verifier a       -- Verifier has only hash
+balance = server.getBalance()  -- hope it's right?
 ```
 
-### Shallow Projections
+With ADS4All:
+```haskell
+(balance, proof) = server.getBalance()
+verified = checkProof rootHash balance proof  -- know it's right!
+```
 
-The `Shallow` type class computes hashes up to but not including nested authenticated values, enabling efficient incremental hashing.
+## Features
 
-### Property-Based Testing
+* Type-safe prover/verifier separation using GADTs
+* BSTs, Skip Lists, and Merkle Trees implementations
+* SHA-256 cryptographic hashing
+* O(log n) proof size
+* Property-based testing with QuickCheck
+* Generic abstractions via type classes
 
-Comprehensive QuickCheck properties ensure:
-- Correctness of operations
-- Proof validity
-- Security properties
-- Performance characteristics
+## Installation
 
-## Testing
-
-The test suite includes:
-
-- **Functional correctness**: Verifies all operations work correctly
-- **Authentication properties**: Ensures proofs are valid and complete
-- **Security properties**: Metamorphic testing for cryptographic guarantees
-- **Performance regression**: Tracks performance characteristics
-
-Run tests with:
+clone the repo:
 ```bash
-stack test
-# or
+git clone https://github.com/yourusername/ADS4All.git
+cd ADS4All
+```
+
+build with stack:
+```bash
+stack build
+stack test  # run tests
+stack bench # run benchmarks
+```
+
+or with cabal:
+```bash
+cabal build
 cabal test
 ```
 
-## Benchmarking
-
-Performance benchmarks compare authenticated vs non-authenticated operations:
-
+To Run Demos:
 ```bash
-stack bench
-# or
-cabal bench
+runghc SimpleDemo.hs     # Basic demo
+runghc CoreDemo.hs       # Full features
+runghc PerformanceDemo.hs # Performance analysis
 ```
 
-Benchmarks measure:
-- Insert operations
-- Lookup operations
-- Proof generation
-- Proof verification
-- Memory usage
 
-## Documentation
 
-Generate Haddock documentation:
+## quick example
 
-```bash
-stack haddock
-# or
-cabal haddock
+Certificate transparency log without trusting the server:
+
+```haskell
+-- Server maintains authenticated tree of certificates
+certTree :: Auth Prover (BST Certificate)
+
+-- Client asks: "is this cert in the log?"
+queryCert :: CertID -> (Maybe Certificate, Proof)
+queryCert id = runProver $ lookup id certTree
+
+-- Client verifies with root hash (32 bytes) + proof
+-- No need to download entire log
 ```
 
-## Contributing
+## how it works
 
-Contributions are welcome! Please:
+1. **Authenticated types**: `Auth Prover a` has data, `Auth Verifier a` has hashes
+2. **Shallow projection**: Hash data structures incrementally  
+3. **Proof generation**: Build path of hashes during operations
+4. **Verification**: Reconstruct root hash from proof
 
-1. Fork the repository
-2. Create a feature branch
-3. Add tests for new functionality
-4. Ensure all tests pass
-5. Submit a pull request
+## Available data structures
 
-## Research
+```haskell
+-- Binary Search Trees
+BST.insert :: Ord a => a -> BST a -> BST a
+BST.lookup :: Ord a => a -> BST a -> Maybe a
+BST.delete :: Ord a => a -> BST a -> BST a
 
-This library is based on research in authenticated data structures and verified programming. Key contributions include:
+-- Skip Lists  
+SkipList.insert :: Ord a => a -> SkipList a -> SkipList a
+SkipList.search :: Ord a => a -> SkipList a -> Bool
+SkipList.delete :: Ord a => a -> SkipList a -> SkipList a
 
-- Type-safe authentication using GADTs
-- Generic abstractions via type classes
-- Comprehensive property-based testing
-- Metamorphic testing for security properties
+-- Merkle Trees
+Merkle.build :: [a] -> MerkleTree a
+Merkle.getProof :: Int -> MerkleTree a -> Proof
+Merkle.verify :: Proof -> Hash -> Bool
+```
+
+## testing your proofs
+
+```haskell
+-- Property: authenticated lookup = regular lookup
+prop_lookup_correct :: Int -> BST Int -> Bool
+prop_lookup_correct x tree = 
+  let (result, proof) = runProver $ lookup x (authProver tree)
+      verified = runVerifier proof $ lookup x (authVerifier tree)
+  in result == lookup x tree && verified
+
+-- Property: proof size is logarithmic
+prop_proof_size :: BST Int -> Bool  
+prop_proof_size tree = 
+  proofSize <= 2 * ceiling (logBase 2 (fromIntegral (size tree)))
+```
+
+## applications
+
+* Certificate transparency logs
+* Blockchain light clients
+* Outsourced database verification
+* Tamper-proof audit logs
+* Cloud storage integrity
+
+## performance
+
+For n elements:
+* Proof generation: O(log n)
+* Proof size: O(log n) hashes
+* Verification: O(log n)
+* Storage: O(n) for tree
+
+Example: 1 million elements = ~20 hash proof (640 bytes)
+
+## current limitations
+
+* BST has no balancing (can degrade to O(n))
+* No persistent storage integration
+* No network protocol included
+
+## contributing
+
+PRs welcome!
+
+```bash
+git checkout -b my-feature
+# make changes
+stack test  # make sure tests pass
+git push origin my-feature
+```
+
+## related work
+
+* Miller et al. "Authenticated Data Structures, Generically" (POPL 2014)
+* Merkle trees (1979)
+* Certificate Transparency (RFC 6962)
+
+## Crafted By:
+
+Nasser Ali Alzahrani as part of my PhD thesis.
 
 ## License
 
-This project is licensed under the BSD-3-Clause License. See LICENSE file for details.
-
-## Authors
-
-- Nasser Altubaga
-
-## Acknowledgments
-
-This work was completed as part of a Master's thesis on authenticated data structures.
-
-## Contact
-
-For questions, issues, or collaboration opportunities, please open an issue on GitHub.
-
----
-
-*Built with Haskell, verified with QuickCheck, secured with cryptography.*
+Not sure yet. need to talk to the uni first.
