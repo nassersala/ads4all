@@ -1,0 +1,63 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+        ghc: ['9.2.8', '9.4.7']
+        
+    steps:
+    - uses: actions/checkout@v3
+    
+    - uses: haskell/actions/setup@v2
+      with:
+        ghc-version: ${{ matrix.ghc }}
+        enable-stack: true
+        stack-version: 'latest'
+    
+    - name: Cache Stack dependencies
+      uses: actions/cache@v3
+      with:
+        path: ~/.stack
+        key: ${{ runner.os }}-stack-${{ hashFiles('stack.yaml.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-stack-
+    
+    - name: Build dependencies
+      run: stack build --only-dependencies --fast
+    
+    - name: Build project
+      run: stack build --fast
+    
+    - name: Run tests
+      run: stack test --fast
+    
+    - name: Generate documentation
+      run: stack haddock
+    
+    - name: Run benchmarks
+      run: stack bench --no-run-benchmarks
+      
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    
+    - uses: haskell/actions/setup@v2
+      with:
+        enable-stack: true
+        stack-version: 'latest'
+    
+    - name: Install HLint
+      run: stack install hlint
+    
+    - name: Run HLint
+      run: ~/.local/bin/hlint src/ test/ examples/
