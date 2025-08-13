@@ -1,0 +1,101 @@
+cabal-version: 1.12
+
+-- This file has been generated from package.yaml by hpack version 0.37.0.
+--
+-- see: https://github.com/sol/hpack
+
+name:           ads4all
+version:        0.1.0.0
+description:    Generic Authenticated Data Structures Framework for Haskell
+homepage:       https://github.com/nasseral/ads4all#readme
+bug-reports:    https://github.com/nasseral/ads4all/issues
+author:         Nasser Al Tubaga
+maintainer:     nasser@example.com
+copyright:      2025 Nasser Al Tubaga
+license:        MIT
+build-type:     Simple
+extra-source-files:
+    README.md
+
+source-repository head
+  type: git
+  location: https://github.com/nasseral/ads4all
+
+library
+  exposed-modules:
+      ADS4All.Core
+      ADS4All.Monad
+      ADS4All.Hash
+      ADS4All.BST
+      ADS4All.SkipList
+      ADS4All.Merkle.Binary
+      ADS4All.Merkle.Nary
+      ADS4All.Merkle.Sparse
+  other-modules:
+      Paths_ads4all
+  hs-source-dirs:
+      src
+  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints
+  build-depends:
+      base >=4.7 && <5
+    , binary
+    , bytestring
+    , containers
+    , cryptonite
+    , deepseq
+    , memory
+    , mtl
+    , random
+    , transformers
+    , vector
+  default-language: Haskell2010
+
+test-suite ads4all-test
+  type: exitcode-stdio-1.0
+  main-is: Spec.hs
+  other-modules:
+      Paths_ads4all
+  hs-source-dirs:
+      test
+  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      QuickCheck
+    , ads4all
+    , base >=4.7 && <5
+    , binary
+    , bytestring
+    , containers
+    , cryptonite
+    , deepseq
+    , hspec
+    , hspec-discover
+    , memory
+    , mtl
+    , random
+    , transformers
+    , vector
+  default-language: Haskell2010
+
+benchmark ads4all-bench
+  type: exitcode-stdio-1.0
+  main-is: Main.hs
+  other-modules:
+      Paths_ads4all
+  hs-source-dirs:
+      benchmarks
+  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      ads4all
+    , base >=4.7 && <5
+    , binary
+    , bytestring
+    , containers
+    , criterion
+    , cryptonite
+    , deepseq
+    , memory
+    , mtl
+    , random
+    , transformers
+    , vector
+  default-language: Haskell2010

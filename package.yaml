@@ -1,0 +1,77 @@
+name:                ads4all
+version:             0.1.0.0
+github:              "nasseral/ads4all"
+license:             MIT
+author:              "Nasser Al Tubaga"
+maintainer:          "nasser@example.com"
+copyright:           "2025 Nasser Al Tubaga"
+
+extra-source-files:
+- README.md
+
+description:         Generic Authenticated Data Structures Framework for Haskell
+
+dependencies:
+- base >= 4.7 && < 5
+- bytestring
+- containers
+- cryptonite
+- memory
+- binary
+- mtl
+- transformers
+- vector
+- random
+- deepseq
+
+ghc-options:
+- -Wall
+- -Wcompat
+- -Widentities
+- -Wincomplete-record-updates
+- -Wincomplete-uni-patterns
+- -Wmissing-export-lists
+- -Wmissing-home-modules
+- -Wpartial-fields
+- -Wredundant-constraints
+
+library:
+  source-dirs: src
+  exposed-modules:
+    - ADS4All.Core
+    - ADS4All.Monad
+    - ADS4All.Hash
+    - ADS4All.BST
+    - ADS4All.SkipList
+    - ADS4All.Merkle.Binary
+    - ADS4All.Merkle.Nary
+    - ADS4All.Merkle.Sparse
+    - ADS4All.Security
+    - ADS4All.Proofs
+
+tests:
+  ads4all-test:
+    main:                Spec.hs
+    source-dirs:         test
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - ads4all
+    - QuickCheck
+    - hspec
+    - hspec-discover
+
+benchmarks:
+  ads4all-bench:
+    main:                Main.hs
+    source-dirs:         benchmarks
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - ads4all
+    - criterion
+    - deepseq

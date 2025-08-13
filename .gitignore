@@ -1,0 +1,73 @@
+# Haskell build artifacts
+dist/
+dist-newstyle/
+.stack-work/
+*.hi
+*.o
+*.dyn_hi
+*.dyn_o
+*.prof
+*.aux
+*.hp
+*.eventlog
+.hsenv
+.cabal-sandbox/
+cabal-sandbox.config
+cabal.project.local
+cabal.project.local~
+.HTF/
+.ghc.environment.*
+
+# Stack
+stack.yaml.lock
+.stack-work/
+
+# Cabal
+dist-newstyle/
+dist/
+
+# IDE and Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+*.sublime-*
+.vim/
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Project specific
+*.pdf
+*.ps
+*.dvi
+
+# Backup files
+*.backup
+*.bak
+*.tmp
+
+# Log files
+*.log
+
+# Test coverage
+*.tix
+.hpc/
+
+# Documentation
+docs/_build/
+*.haddock
+
+# Benchmark results
+benchmarks/*.html
+benchmarks/*.csv
+
+# Cache
+.cache/
+
+# Other
+.env
+.envrc
