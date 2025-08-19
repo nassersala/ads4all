@@ -2,9 +2,9 @@ name:                ads4all
 version:             0.1.0.0
 github:              "nasseral/ads4all"
 license:             MIT
-author:              "Nasser Al Tubaga"
-maintainer:          "nasser@example.com"
-copyright:           "2025 Nasser Al Tubaga"
+author:              "Nasser Ali Alzahrani"
+maintainer:          "nassersala@gmail.com"
+copyright:           "2025 Nasser Ali Alzahrani"
 
 extra-source-files:
 - README.md

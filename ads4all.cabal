@@ -9,9 +9,9 @@ version:        0.1.0.0
 description:    Generic Authenticated Data Structures Framework for Haskell
 homepage:       https://github.com/nasseral/ads4all#readme
 bug-reports:    https://github.com/nasseral/ads4all/issues
-author:         Nasser Al Tubaga
-maintainer:     nasser@example.com
-copyright:      2025 Nasser Al Tubaga
+author:         Nasser Ali Alzahrani
+maintainer:     nassersala@gmail.com
+copyright:      2025 Nasser Ali Alzahrani
 license:        MIT
 build-type:     Simple
 extra-source-files:
