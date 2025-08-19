@@ -43,7 +43,7 @@ verified = checkProof rootHash balance proof  -- know it's right!
 
 * Type-safe prover/verifier separation using GADTs
 * BSTs, Skip Lists, and Merkle Trees implementations (Battery Included!)
-* But you can also easily create your own new authencated data strcutrues (ref Thesis, and LambdaAuth)
+* But you can also easily create your own new authenticated data structures (see Thesis and LambdaAuth)
 * SHA-256 cryptographic hashing
 * O(log n) proof size
 * Property-based testing with QuickCheck
