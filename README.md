@@ -42,7 +42,8 @@ verified = checkProof rootHash balance proof  -- know it's right!
 ## Features
 
 * Type-safe prover/verifier separation using GADTs
-* BSTs, Skip Lists, and Merkle Trees implementations
+* BSTs, Skip Lists, and Merkle Trees implementations (Battery Included!)
+* But you can also easily create your own new authencated data strcutrues (ref Thesis, and LambdaAuth)
 * SHA-256 cryptographic hashing
 * O(log n) proof size
 * Property-based testing with QuickCheck
@@ -52,7 +53,7 @@ verified = checkProof rootHash balance proof  -- know it's right!
 
 clone the repo:
 ```bash
-git clone https://github.com/yourusername/ADS4All.git
+git clone https://github.com/nassersala/ADS4All.git
 cd ADS4All
 ```
 
@@ -158,7 +159,6 @@ Example: 1 million elements = ~20 hash proof (640 bytes)
 
 * BST has no balancing (can degrade to O(n))
 * No persistent storage integration
-* No network protocol included
 
 ## contributing
 
