@@ -104,22 +104,53 @@ queryCert id = runProver $ lookup id certTree
 
 ## Available data structures
 
+ADS4All provides authenticated versions of common data structures. Each structure supports both regular operations AND cryptographically authenticated operations with proof generation and verification.
+
+### Binary Search Trees (BST)
 ```haskell
--- Binary Search Trees
+-- Regular operations
 BST.insert :: Ord a => a -> BST a -> BST a
 BST.lookup :: Ord a => a -> BST a -> Maybe a
 BST.delete :: Ord a => a -> BST a -> BST a
 
--- Skip Lists  
-SkipList.insert :: Ord a => a -> SkipList a -> SkipList a
-SkipList.search :: Ord a => a -> SkipList a -> Bool
+-- Authenticated operations (the real power of ADS4All!)
+BST.authBST :: Shallow a => BST a -> ADS mode (AuthBST mode a)
+BST.lookupAuth :: (Ord a, Shallow a) => a -> BST a -> ADS mode (Maybe a, ProofPath)
+BST.insertAuth :: (Ord a, Shallow a) => a -> AuthBST mode a -> ADS mode (AuthBST mode a)
+BST.deleteAuth :: (Ord a, Shallow a) => a -> AuthBST mode a -> ADS mode (AuthBST mode a)
+
+-- Proof generation and verification
+BST.generateProof :: (Ord a, Shallow a) => a -> BST a -> ProofPath
+BST.verifyProof :: Shallow a => a -> Hash -> ProofPath -> Bool
+```
+
+### Skip Lists
+```haskell
+-- Regular operations
+SkipList.insert :: (Ord a, RandomGen g) => a -> SkipList a -> State g (SkipList a)
+SkipList.lookup :: Ord a => a -> SkipList a -> Maybe a
 SkipList.delete :: Ord a => a -> SkipList a -> SkipList a
 
--- Merkle Trees
+-- Authenticated operations (cryptographic proofs!)
+SkipList.authSkipList :: Shallow a => SkipList a -> ADS mode (AuthSkipList mode a)
+SkipList.lookupAuth :: (Ord a, Shallow a) => a -> SkipList a -> ADS mode (Maybe a, SkipProof a)
+SkipList.insertAuth :: (Ord a, Shallow a, RandomGen g) => a -> AuthSkipList mode a -> StateT g (ADS mode) (AuthSkipList mode a)
+SkipList.deleteAuth :: (Ord a, Shallow a) => a -> AuthSkipList mode a -> ADS mode (AuthSkipList mode a)
+
+-- Proof generation and verification
+SkipList.generateLookupProof :: (Ord a, Shallow a) => a -> SkipList a -> SkipProof a
+SkipList.verifyLookupProof :: Shallow a => a -> Hash -> SkipProof a -> Bool
+```
+
+### Merkle Trees
+```haskell
+-- Construction and proof operations
 Merkle.build :: [a] -> MerkleTree a
 Merkle.getProof :: Int -> MerkleTree a -> Proof
 Merkle.verify :: Proof -> Hash -> Bool
 ```
+
+The key innovation: **ADS4All implements a LambdaAuth-like embedded language in Haskell** that lets you transform ANY data structure into an authenticated one. Using GADTs for type-safe prover/verifier separation and the `Authenticated` type class, you can easily create new authenticated data structures beyond just BSTs and SkipLists - the framework handles all the proof generation and verification complexity for you.
 
 ## testing your proofs
 
